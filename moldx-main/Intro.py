@@ -173,15 +173,18 @@ with st.spinner("Loading..."):
         add_vertical_space(7)
         col1, _, col3, _, col5 = st.columns(5)
 
+        # Get the current directory path
+        __location__ = os.getcwd()
+
         # Display logos
         with col1:
-            st.image("Logo_WDI.jpg", width=300,)
+            st.image( __location__+"/Logo_WDI.jpg", width=300,)
             
         with col3:
-            st.image("Logo_GF.png", width=200)
+            st.image( __location__+"/Logo_GF.png", width=200)
             
         with col5:
-            st.image("Logo_FIND.jpg", width=150)
+            st.image( __location__+"/Logo_FIND.jpg", width=150)
 
 
 
