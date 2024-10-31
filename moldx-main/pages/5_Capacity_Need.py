@@ -19,17 +19,20 @@ def get_gdrive_service():
     )
     return build("drive", "v3", credentials=creds)
 
-# Function to search for a file by name and retrieve its ID
-def get_file_id_by_name(file_name):
+# Function to search for a file by name within a specific folder
+def get_file_id_by_name(file_name, folder_id):
     service = get_gdrive_service()
+    query = f"name='{file_name}' and '{folder_id}' in parents and mimeType='application/vnd.geo+json'"
+    
     results = service.files().list(
-        q=f"name='{file_name}' and parents in '1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH' and mimeType='application/vnd.geo+json'",
+        q=query,
+        spaces='drive',
         fields="files(id, name)"
     ).execute()
     
     files = results.get('files', [])
     if not files:
-        st.error(f"No file found with the name: {file_name}")
+        st.error(f"No file found with the name: {file_name} in folder ID: {folder_id}")
         return None
     return files[0]['id']
 
@@ -41,15 +44,31 @@ def download_file(file_id, file_name):
         request.execute(f)
     return file_name
 
-# Load GeoJSON by file name
-def load_geojson(file_name):
-    file_id = get_file_id_by_name(file_name)
+# Load GeoJSON by file name and folder ID
+def load_geojson(file_name, folder_id):
+    file_id = get_file_id_by_name(file_name, folder_id)
     if not file_id:
         return None
     file_path = download_file(file_id, "temp.geojson")
     return gpd.read_file(file_path)
-
-
+    
+# Function to list all files in a specific folder
+def list_files_in_folder(folder_id):
+    service = get_gdrive_service()
+    query = f"'{folder_id}' in parents"
+    
+    results = service.files().list(
+        q=query,
+        spaces='drive',
+        fields="files(id, name)"
+    ).execute()
+    
+    files = results.get('files', [])
+    if not files:
+        st.write("No files found in the folder.")
+    else:
+        for file in files:
+            st.write(f"File Name: {file['name']}, File ID: {file['id']}")
 
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
@@ -251,9 +270,10 @@ with st.spinner("Loading..."):
 
         NationalStats['AnnualNeed_PctCapacity_HIV_TB'] = AnnualNeed_PctCapacity_HIV_TB
         
-    ### Join relevant columns to geopandas dataframe
+    #Check if pciking the right folder
+    print(  list_files_in_folder("H0ToFc6igpX6gYR8dYUSgK1coVXH")  )
     # Usage example: Replace 'sample.geojson' with the name of the file you want to load
-    geo_df = load_geojson(st.session_state.TargetCountry + '.geojson')
+    geo_df = load_geojson(st.session_state.TargetCountry + '.geojson', '1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH' )
     #if geo_df is not None:
     #	    st.write(geo_df)
     #else:
