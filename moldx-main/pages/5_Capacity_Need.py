@@ -8,6 +8,49 @@ import folium
 from streamlit_folium import folium_static
 import json
 import functions as f
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
+# Initialize the Google Drive API
+def get_gdrive_service():
+    creds = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/drive"]
+    )
+    return build("drive", "v3", credentials=creds)
+
+# Function to search for a file by name and retrieve its ID
+def get_file_id_by_name(file_name):
+    service = get_gdrive_service()
+    results = service.files().list(
+        q=f"name='{file_name}' and parents in '1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH' and mimeType='application/vnd.geo+json'",
+        fields="files(id, name)"
+    ).execute()
+    
+    files = results.get('files', [])
+    if not files:
+        st.error(f"No file found with the name: {file_name}")
+        return None
+    return files[0]['id']
+
+# Function to download a file by its ID
+def download_file(file_id, file_name):
+    service = get_gdrive_service()
+    request = service.files().get_media(fileId=file_id)
+    with open(file_name, "wb") as f:
+        request.execute(f)
+    return file_name
+
+# Load GeoJSON by file name
+def load_geojson(file_name):
+    file_id = get_file_id_by_name(file_name)
+    if not file_id:
+        return None
+    file_path = download_file(file_id, "temp.geojson")
+    return gpd.read_file(file_path)
+
+
+
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
 
@@ -209,8 +252,14 @@ with st.spinner("Loading..."):
         NationalStats['AnnualNeed_PctCapacity_HIV_TB'] = AnnualNeed_PctCapacity_HIV_TB
         
     ### Join relevant columns to geopandas dataframe
+    # Usage example: Replace 'sample.geojson' with the name of the file you want to load
+    geo_df = load_geojson(st.session_state.TargetCountry + '.geojson')
+    #if geo_df is not None:
+    #	    st.write(geo_df)
+    #else:
+    #	    st.write("File not found.")
     ## Import geojson file as geopandas dataframe
-    geo_df = gpd.read_file('geojson/' + st.session_state.TargetCountry + '.geojson')
+    #geo_df = gpd.read_file('geojson/' + st.session_state.TargetCountry + '.geojson')
 
     ## Subset by regions selected
     geo_df = geo_df[geo_df['admin_name'].isin(st.session_state.RegionsSelected)]
