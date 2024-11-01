@@ -22,7 +22,7 @@ def get_gdrive_service():
 # Function to search for a file by name within a specific folder
 def get_file_id_by_name(file_name, folder_id):
     service = get_gdrive_service()
-    query = f"name='{file_name}' and '{folder_id}' in parents and mimeType='application/vnd.geo+json'"
+    query = f"'{folder_id}' in parents"  # Only query for the folder
     
     results = service.files().list(
         q=query,
@@ -31,10 +31,20 @@ def get_file_id_by_name(file_name, folder_id):
     ).execute()
     
     files = results.get('files', [])
-    if not files:
-        st.error(f"No file found with the name: {file_name} in folder ID: {folder_id}")
-        return None
-    return files[0]['id']
+    
+    # Print all files in the folder for debugging
+    st.write("Files in folder:")
+    for file in files:
+        st.write(f"File Name: '{file['name']}', File ID: {file['id']}")  # Displaying the files for verification
+
+    # Now, check if the specific file name exists (case insensitive)
+    for file in files:
+        if file['name'].lower() == file_name.lower():
+            return file['id']
+    
+    st.error(f"No file found with the name: {file_name} in folder ID: {folder_id}")
+    return None
+
 
 # Function to download a file by its ID
 def download_file(file_id, file_name):
@@ -270,10 +280,13 @@ with st.spinner("Loading..."):
 
         NationalStats['AnnualNeed_PctCapacity_HIV_TB'] = AnnualNeed_PctCapacity_HIV_TB
         
-    #Check if pciking the right folder
-    print(  list_files_in_folder("1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH")  )
+    # Check if picking the right folder
+    list_files_in_folder("1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH")
+
     # Usage example: Replace 'sample.geojson' with the name of the file you want to load
-    geo_df = load_geojson(st.session_state.TargetCountry + '.geojson', '1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH' )
+    file_name = st.session_state.TargetCountry + '.geojson'  # Ensure this is the correct filename
+    geo_df = load_geojson(file_name, '1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH')
+
     #if geo_df is not None:
     #	    st.write(geo_df)
     #else:
