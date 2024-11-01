@@ -10,6 +10,8 @@ import json
 import functions as f
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
+import io
 
 # Initialize the Google Drive API
 def get_gdrive_service():
@@ -50,8 +52,22 @@ def get_file_id_by_name(file_name, folder_id):
 def download_file(file_id, file_name):
     service = get_gdrive_service()
     request = service.files().get_media(fileId=file_id)
+    
+    # Create a BytesIO stream to hold the downloaded content
+    fh = io.BytesIO()
+    
+    # Use MediaIoBaseDownload to download the file
+    downloader = MediaIoBaseDownload(fh, request)
+    
+    done = False
+    while done is False:
+        status, done = downloader.next_chunk()
+        st.write(f"Download {int(status.progress() * 100)}% complete.")
+
+    # Write the content to a file after download is complete
     with open(file_name, "wb") as f:
-        request.execute(f)
+        f.write(fh.getbuffer())
+
     return file_name
 
 # Load GeoJSON by file name and folder ID
