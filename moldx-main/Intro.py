@@ -85,7 +85,7 @@ with st.spinner("Loading..."):
     # Define default values for constants
     DISTANCE_THRESHOLD = 10000 #Maximum km that a sample can travel
     COST_PER_KM = 0.45 #Transport cost per km in USD
-    WORK_DAYS_PER_YEAR = 250 #Number of days per year that molecular diagnostic machines are intended to operate (ignoring downtime)
+    WORK_DAYS_PER_YEAR = 220 #Number of days per year that molecular diagnostic machines are intended to operate (ignoring downtime)
     TRANSPORT_WEEKS_PER_YEAR = 50 #Number of weeks per year that sample transport routes are intended to operate
     TRANSPORT_FREQ_PER_WEEK = 1 #Number of times per week that samples are transported along each route 
     ANALYSIS_YEAR = 2022 #Year of analysis, for costs
