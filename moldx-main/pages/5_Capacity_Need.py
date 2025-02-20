@@ -577,12 +577,6 @@ with st.spinner("Loading..."):
             file_name="summary_national.csv",
             mime="text/csv"
         )
-        st.download_button(
-            label="Download National Summary as XLSX",
-            data=convert_df_to_excel(summary_national),
-            file_name="summary_national.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
 
         st.table(summary_table1)
         st.download_button(
@@ -591,12 +585,6 @@ with st.spinner("Loading..."):
             file_name="summary_table1.csv",
             mime="text/csv"
         )
-        st.download_button(
-            label="Download Table 1 as XLSX",
-            data=convert_df_to_excel(summary_table1),
-            file_name="summary_table1.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
 
         st.table(summary_table2)
         st.download_button(
@@ -604,12 +592,6 @@ with st.spinner("Loading..."):
             data=convert_df_to_csv(summary_table2),
             file_name="summary_table2.csv",
             mime="text/csv"
-        )
-        st.download_button(
-            label="Download Table 2 as XLSX",
-            data=convert_df_to_excel(summary_table2),
-            file_name="summary_table2.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
         if TestingNeedAdjusted:
