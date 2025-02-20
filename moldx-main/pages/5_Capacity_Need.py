@@ -558,14 +558,59 @@ with st.spinner("Loading..."):
     summary_table1 = summary_table.iloc[:, :6]
     summary_table2 = summary_table.iloc[:, 6:]
 
+    def convert_df_to_csv(df):
+        return df.to_csv(index=False).encode('utf-8')
+
+    def convert_df_to_excel(df):
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False)
+        return output.getvalue()
+
     # Display all summary tables
     with st.container():
+        # Display tables
         st.table(summary_national)
-        add_vertical_space(2)
+        st.download_button(
+            label="Download National Summary as CSV",
+            data=convert_df_to_csv(summary_national),
+            file_name="summary_national.csv",
+            mime="text/csv"
+        )
+        st.download_button(
+            label="Download National Summary as XLSX",
+            data=convert_df_to_excel(summary_national),
+            file_name="summary_national.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
         st.table(summary_table1)
-        add_vertical_space(2)
+        st.download_button(
+            label="Download Table 1 as CSV",
+            data=convert_df_to_csv(summary_table1),
+            file_name="summary_table1.csv",
+            mime="text/csv"
+        )
+        st.download_button(
+            label="Download Table 1 as XLSX",
+            data=convert_df_to_excel(summary_table1),
+            file_name="summary_table1.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
         st.table(summary_table2)
-        add_vertical_space(2)
+        st.download_button(
+            label="Download Table 2 as CSV",
+            data=convert_df_to_csv(summary_table2),
+            file_name="summary_table2.csv",
+            mime="text/csv"
+        )
+        st.download_button(
+            label="Download Table 2 as XLSX",
+            data=convert_df_to_excel(summary_table2),
+            file_name="summary_table2.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
         if TestingNeedAdjusted:
             st.caption(f'The number of tests at baseline is higher than estimated testing need for at least one region and one disease.  For the following region-disease combinations, the original testing need estimates were replaced with the number of tests performed at baseline.')
