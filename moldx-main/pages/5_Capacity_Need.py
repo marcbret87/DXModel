@@ -559,13 +559,12 @@ with st.spinner("Loading..."):
     summary_table2 = summary_table.iloc[:, 6:]
 
     def convert_df_to_csv(df):
-        return df.to_csv(index=False).encode('utf-8')
+        return df.to_csv(index=True).encode('utf-8')
 
     # Display all summary tables
     with st.container():
         # Display tables
         st.table(summary_national)
-        summary_national.reset_index()
         st.download_button(
             label="Download National Summary as CSV",
             data=convert_df_to_csv(summary_national),
@@ -574,7 +573,6 @@ with st.spinner("Loading..."):
         )
 
         st.table(summary_table1)
-        summary_table1.reset_index()
         st.download_button(
             label="Download Table 1 as CSV",
             data=convert_df_to_csv(summary_table1),
@@ -583,7 +581,6 @@ with st.spinner("Loading..."):
         )
 
         st.table(summary_table2)
-        summary_table2.reset_index()
         st.download_button(
             label="Download Table 2 as CSV",
             data=convert_df_to_csv(summary_table2),
