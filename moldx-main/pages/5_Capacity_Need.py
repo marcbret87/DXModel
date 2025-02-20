@@ -561,16 +561,11 @@ with st.spinner("Loading..."):
     def convert_df_to_csv(df):
         return df.to_csv(index=False).encode('utf-8')
 
-    def convert_df_to_excel(df):
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            df.to_excel(writer, index=False)
-        return output.getvalue()
-
     # Display all summary tables
     with st.container():
         # Display tables
         st.table(summary_national)
+        summary_national.reset_index()
         st.download_button(
             label="Download National Summary as CSV",
             data=convert_df_to_csv(summary_national),
@@ -579,6 +574,7 @@ with st.spinner("Loading..."):
         )
 
         st.table(summary_table1)
+        summary_table1.reset_index()
         st.download_button(
             label="Download Table 1 as CSV",
             data=convert_df_to_csv(summary_table1),
@@ -587,6 +583,7 @@ with st.spinner("Loading..."):
         )
 
         st.table(summary_table2)
+        summary_table2.reset_index()
         st.download_button(
             label="Download Table 2 as CSV",
             data=convert_df_to_csv(summary_table2),
