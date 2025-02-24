@@ -193,18 +193,18 @@ with st.spinner("Loading..."):
     # Adjust testing need if the number of tests at baseline exceeds estimated need
     TestingNeedAdjusted = False
     RegionsAdjusted = {}
-    for d in DiseaseList:
-        CapacityNeed[f'TestingNeed_{d}_Original'] = CapacityNeed[f'TestingNeed_{d}']
-        CapacityNeed['TestingNeed_' + d] = np.where(
-            CapacityNeed['AnnualTests_' + d] > CapacityNeed['TestingNeed_' + d], 
-            CapacityNeed['AnnualTests_' + d],
-            CapacityNeed['TestingNeed_' + d])
-        
-        if (CapacityNeed[f'TestingNeed_{d}'] != CapacityNeed[f'TestingNeed_{d}_Original']).any():
-            TestingNeedAdjusted = True
-        
-        # Make list of CapacityNeed['admin_name'] for which (CapacityNeed[f'TestingNeed_{d}'] != CapacityNeed[f'TestingNeed_{d}_Original'])
-        RegionsAdjusted[d] = CapacityNeed.loc[CapacityNeed[f'TestingNeed_{d}'] != CapacityNeed[f'TestingNeed_{d}_Original'], 'admin_name'].tolist()
+    #for d in DiseaseList:
+    #    CapacityNeed[f'TestingNeed_{d}_Original'] = CapacityNeed[f'TestingNeed_{d}']
+    #    CapacityNeed['TestingNeed_' + d] = np.where(
+    #        CapacityNeed['AnnualTests_' + d] > CapacityNeed['TestingNeed_' + d], 
+    #        CapacityNeed['AnnualTests_' + d],
+    #        CapacityNeed['TestingNeed_' + d])
+    #    
+    #    if (CapacityNeed[f'TestingNeed_{d}'] != CapacityNeed[f'TestingNeed_{d}_Original']).any():
+    #        TestingNeedAdjusted = True
+    #    
+    #    # Make list of CapacityNeed['admin_name'] for which (CapacityNeed[f'TestingNeed_{d}'] != CapacityNeed[f'TestingNeed_{d}_Original'])
+    #    RegionsAdjusted[d] = CapacityNeed.loc[CapacityNeed[f'TestingNeed_{d}'] != CapacityNeed[f'TestingNeed_{d}_Original'], 'admin_name'].tolist()
         
     # Calculate percentages
     NeedDict = {}
