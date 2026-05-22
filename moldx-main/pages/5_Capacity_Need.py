@@ -70,13 +70,32 @@ def download_file(file_id, file_name):
 
     return file_name
 
-# Load GeoJSON by file name and folder ID
+# Load GeoJSON by file name and folder ID with local fallback
 def load_geojson(file_name, folder_id):
-    file_id = get_file_id_by_name(file_name, folder_id)
-    if not file_id:
+    import os
+    # Check local geojson folder first (relative to this script's parent folder)
+    local_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'geojson')
+    local_path = os.path.join(local_dir, file_name)
+    if os.path.exists(local_path):
+        try:
+            return gpd.read_file(local_path)
+        except Exception as e:
+            st.warning(f"Failed to read local GeoJSON file '{file_name}': {e}. Trying Google Drive...")
+
+    # Fallback to Google Drive: check if secrets exist
+    if "gcp_service_account" not in st.secrets:
+        st.warning(f"Local GeoJSON file '{file_name}' not found, and Google Drive secrets are missing. Cannot load map boundaries.")
         return None
-    file_path = download_file(file_id, "temp.geojson")
-    return gpd.read_file(file_path)
+
+    try:
+        file_id = get_file_id_by_name(file_name, folder_id)
+        if not file_id:
+            return None
+        file_path = download_file(file_id, "temp.geojson")
+        return gpd.read_file(file_path)
+    except Exception as e:
+        st.error(f"Failed to download GeoJSON from Google Drive: {e}")
+        return None
     
 # Function to list all files in a specific folder
 def list_files_in_folder(folder_id):
@@ -98,6 +117,8 @@ def list_files_in_folder(folder_id):
 
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Results")
 
 with st.spinner("Loading..."):
     ### Assign session state data to dataframes matching subsequent code
@@ -296,12 +317,13 @@ with st.spinner("Loading..."):
 
         NationalStats['AnnualNeed_PctCapacity_HIV_TB'] = AnnualNeed_PctCapacity_HIV_TB
         
-    # Check if picking the right folder
-    list_files_in_folder("1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH")
-
     # Usage example: Replace 'sample.geojson' with the name of the file you want to load
     file_name = st.session_state.TargetCountry + '.geojson'  # Ensure this is the correct filename
     geo_df = load_geojson(file_name, '1LJo-H0ToFc6igpX6gYR8dYUSgK1coVXH')
+
+    if geo_df is None:
+        st.error(f"Failed to load geography boundaries for '{st.session_state.TargetCountry}'. Please verify that the local GeoJSON file exists in the 'geojson/' directory or configure Google Drive service account secrets.")
+        st.stop()
 
     #if geo_df is not None:
     #	    st.write(geo_df)

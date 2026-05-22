@@ -1,8 +1,11 @@
 import streamlit as st
+import functions as f
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.add_vertical_space import add_vertical_space
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Question")
 
 def set_question(question_short: str, question_index: int) -> None:
     """

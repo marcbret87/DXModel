@@ -1,10 +1,11 @@
+import functions as f
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.add_vertical_space import add_vertical_space
-import pandas as pd
-import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import pandas as pd
+import os
 
 # Hide the streamlit sidebar
 st.set_page_config(page_title="Modeling Tradeoffs in Molecular Diagnostic Equipment Selection and Use", 
@@ -146,6 +147,8 @@ with st.spinner("Loading..."):
 
     # Display title
     st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+    f.inject_custom_styling()
+    f.draw_stepper("Intro")
 
     with st.container():
         _, col2, _ = st.columns([1,5,1])

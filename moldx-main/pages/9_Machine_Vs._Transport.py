@@ -9,6 +9,8 @@ import plotly.graph_objects as go
 import functions as f
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Results")
 
 ### Assign session state data to dataframes and variables matching subsequent code
 MachineTypes = st.session_state.MachineTypes

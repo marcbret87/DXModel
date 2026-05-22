@@ -1,10 +1,13 @@
 import streamlit as st
+import functions as f
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.add_vertical_space import add_vertical_space
 import numpy as np
 from typing import List
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Country")
 
 @st.cache_data
 def create_country_options()-> List[str]:
@@ -44,6 +47,32 @@ def set_target_country_and_year(TargetCountry_FullName: str, TargetCountry_Index
         None
     """
     TargetCountry = st.session_state.EligibleCountries.index[st.session_state.EligibleCountries['name'] == TargetCountry_FullName][0]
+    
+    country_changed = ('TargetCountry' in st.session_state and st.session_state.TargetCountry != TargetCountry)
+    year_changed = ('AnalysisYear' in st.session_state and st.session_state.AnalysisYear != AnalysisYear)
+
+    if country_changed or year_changed:
+        if 'apply_inflation_machine_types_called' in st.session_state:
+            st.session_state.apply_inflation_machine_types_called = False
+        if 'apply_inflation_staff_called' in st.session_state:
+            st.session_state.apply_inflation_staff_called = False
+        if 'MachineTypesOriginal' in st.session_state:
+            st.session_state.MachineTypes = st.session_state.MachineTypesOriginal.copy()
+
+    if country_changed:
+        if 'BaselineData' in st.session_state:
+            del st.session_state['BaselineData']
+        if 'BaselineData_Edit' in st.session_state:
+            del st.session_state['BaselineData_Edit']
+        if 'AddMachinesData' in st.session_state:
+            del st.session_state['AddMachinesData']
+        if 'AddMachinesData_Edit' in st.session_state:
+            del st.session_state['AddMachinesData_Edit']
+        if 'RegionsSelected' in st.session_state:
+            del st.session_state['RegionsSelected']
+        if 'ValSave' in st.session_state:
+            del st.session_state['ValSave']
+
     st.session_state.TargetCountry = TargetCountry   
     st.session_state.TargetCountry_Index = TargetCountry_Index
     st.session_state.AnalysisYear = AnalysisYear 

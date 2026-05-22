@@ -8,6 +8,8 @@ import functions as f
 
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Baseline")
 
 @st.cache_data(max_entries=1)
 def load_baseline_data(target_country: str, regions_selected: List[str]) -> None:
@@ -118,14 +120,18 @@ with st.container():
  
     with col2:
         with st.expander('Download'):
-            st.caption('Please click Save before downloading.')
             if st.button('Save', use_container_width=True):
                 st.session_state.BaselineData = st.session_state.BaselineData_Edit
                 st.session_state.SaveClicked = True
             
+            # Use the edited baseline data if edits exist, otherwise default to baseline data
+            download_df = st.session_state.BaselineData
+            if 'BaselineData_Edit' in st.session_state and not st.session_state.BaselineData_Edit.empty:
+                download_df = st.session_state.BaselineData_Edit
+
             st.download_button(
                 label='Download as CSV', 
-                data=convert_df(st.session_state.BaselineData),
+                data=convert_df(download_df),
                 file_name=f'{st.session_state.TargetCountry}_BaselineData.csv',
                 mime='text/csv',
                 use_container_width=True)

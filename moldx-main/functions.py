@@ -1878,3 +1878,123 @@ function customNumberFormat(params) {
         }
     }
     """)
+
+
+def inject_custom_styling():
+    """
+    Injects custom premium HSL styling, Google Fonts, hover effects,
+    and responsive layouts to give the application a premium feel.
+    """
+    st.markdown("""
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+            
+            /* Global Font Override */
+            html, body, [class*="css"], .stMarkdown, p, h1, h2, h3, h4, h5, h6, span, label, input, button {
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+            }
+            
+            /* Soft Card Shadows & Glassmorphism */
+            div[data-testid="stVerticalBlock"] > div[style*="border"] {
+                border-radius: 12px !important;
+                border: 1px solid rgba(226, 232, 240, 0.8) !important;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+                background-color: white !important;
+                padding: 1.5rem !important;
+            }
+
+            /* Custom Premium Buttons */
+            div.stButton > button {
+                border-radius: 8px !important;
+                border: 1px solid #4f46e5 !important;
+                background-color: #4f46e5 !important;
+                color: white !important;
+                font-weight: 600 !important;
+                padding: 0.5rem 1rem !important;
+                transition: all 0.2s ease-in-out !important;
+            }
+            
+            div.stButton > button:hover {
+                background-color: #4338ca !important;
+                border-color: #4338ca !important;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2) !important;
+                transform: translateY(-1px) !important;
+            }
+
+            div.stButton > button:active {
+                transform: translateY(0px) !important;
+            }
+
+            /* Custom styling for back buttons to look neutral */
+            div.stButton > button:has(div:contains("Back")),
+            div.stButton > button:has(span:contains("Back")) {
+                background-color: transparent !important;
+                border: 1px solid #d1d5db !important;
+                color: #374151 !important;
+            }
+            div.stButton > button:has(div:contains("Back")):hover,
+            div.stButton > button:has(span:contains("Back")):hover {
+                background-color: #f3f4f6 !important;
+                color: #111827 !important;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+
+def draw_stepper(current_step_name: str):
+    """
+    Renders a stunning horizontal progress bar (stepper) at the top of the page.
+    """
+    steps = [
+        ("Intro", "intro"),
+        ("Country", "select country"),
+        ("Regions", "select regions"),
+        ("Baseline", "baseline data"),
+        ("Question", "select question"),
+        ("Disease", "select disease"),
+        ("Verify", "verify inputs"),
+        ("Results", None)
+    ]
+    
+    # Render steps HTML
+    steps_html = "<div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 0 10px;'>"
+    
+    current_index = 0
+    for idx, (name, _) in enumerate(steps):
+        if name.lower() == current_step_name.lower():
+            current_index = idx
+            break
+            
+    for idx, (name, _) in enumerate(steps):
+        is_completed = idx < current_index
+        is_active = idx == current_index
+        
+        # Color palettes
+        circle_color = "#4f46e5" if (is_completed or is_active) else "#e5e7eb"
+        text_color = "#1f2937" if (is_completed or is_active) else "#9ca3af"
+        text_weight = "bold" if is_active else "normal"
+        border_style = "solid" if is_active else "none"
+        
+        # Draw step circle
+        steps_html += f"""
+            <div style='display: flex; flex-direction: column; align-items: center; flex: 1; position: relative;'>
+                <div style='width: 28px; height: 28px; border-radius: 50%; background-color: {circle_color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: bold; border: 2px {border_style} #818cf8; z-index: 2;'>
+                    {idx + 1}
+                </div>
+                <div style='margin-top: 6px; font-size: 12px; color: {text_color}; font-weight: {text_weight}; text-align: center; font-family: "Plus Jakarta Sans", sans-serif;'>
+                    {name}
+                </div>
+        """
+        
+        # Draw connecting line to next step
+        if idx < len(steps) - 1:
+            line_color = "#4f46e5" if idx < current_index else "#e5e7eb"
+            steps_html += f"""
+                <div style='position: absolute; top: 14px; left: calc(50% + 14px); right: calc(-50% + 14px); height: 2px; background-color: {line_color}; z-index: 1;'></div>
+            """
+            
+        steps_html += "</div>"
+        
+    steps_html += "</div>"
+    
+    st.markdown(steps_html, unsafe_allow_html=True)

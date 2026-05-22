@@ -1,4 +1,5 @@
 import streamlit as st
+import functions as f
 from streamlit_extras.switch_page_button import switch_page
 from streamlit_extras.add_vertical_space import add_vertical_space
 import numpy as np
@@ -6,6 +7,8 @@ from typing import List, Dict
 
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Regions")
 
 @st.cache_data
 def load_regions(target_country: str) -> List[str]:

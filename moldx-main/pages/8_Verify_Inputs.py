@@ -6,6 +6,8 @@ import numpy as np
 import functions as f
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Verify")
 
 with st.container():
     st.header('Verify Inputs')
@@ -366,7 +368,7 @@ with st.container():
             
             else:
                 # Save changes to tables and variables applicable to machine vs. transport and buy vs. rent questions
-                st.session_state.StaffCost.loc[st.session_state.TargetCountry, 'AnnualSalaryUSD'] = verify_3_edit.values
+                st.session_state.StaffCost.update(verify_3_edit)
                 st.session_state.RegionsTransportData = verify_regions_edit
                 st.session_state['TestsPerRoute_Avg'] = TestsPerRoute_Avg
 

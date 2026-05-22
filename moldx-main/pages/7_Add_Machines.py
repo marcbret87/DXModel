@@ -6,6 +6,8 @@ from typing import List
 import functions as f
 
 st.markdown(st.session_state.ReducePadding, unsafe_allow_html=True)
+f.inject_custom_styling()
+f.draw_stepper("Disease")
 
 @st.cache_data(max_entries=1)
 # TargetCountry and RegionsSelected passed to override cache if new country or region set input for baseline data
