@@ -179,7 +179,7 @@ with st.spinner("Loading..."):
         col1, _, col3, _, col5 = st.columns(5)
 
         # Get the current directory path
-        __location__ = os.getcwd()
+        __location__ = os.path.dirname(os.path.realpath(__file__))
 
         # Display logos
         with col1:
