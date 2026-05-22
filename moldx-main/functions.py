@@ -1997,4 +1997,6 @@ def draw_stepper(current_step_name: str):
         
     steps_html += "</div>"
     
-    st.markdown(steps_html, unsafe_allow_html=True)
+    # Clean the HTML string to prevent Streamlit's Markdown engine from treating it as a code block due to indentation/newlines
+    clean_html = "".join(line.strip() for line in steps_html.split("\n"))
+    st.markdown(clean_html, unsafe_allow_html=True)
