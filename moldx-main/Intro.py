@@ -154,7 +154,7 @@ with st.spinner("Loading..."):
         _, col2, _ = st.columns([1,5,1])
         
         with col2:
-            st.markdown("<h1 style='text-align: center; color: black;'>Modeling Tradeoffs in Molecular Diagnostic Equipment Selection and Use</h1>", unsafe_allow_html=True)
+            st.markdown("<h1 style='text-align: center; color: white;'>Modeling Tradeoffs in Molecular Diagnostic Equipment Selection and Use</h1>", unsafe_allow_html=True)
 
     with st.container():
         add_vertical_space(2)
